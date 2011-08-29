@@ -204,7 +204,11 @@ def do_migration(threadpoolsize=7):
         if photo.get('media') == 'video':
             return "http://www.flickr.com/photos/%s/%s/play/orig/%s" % (flickr_usernsid, photo.get('id'), photo.get('originalsecret'))
         else:
-            return photo.get('url_o')
+            # Some people say that extra option 'url_o' only works in pro accounts, so we tried to find the largest image assuming the last item returned by getSizes
+            photoSizes = FLICKR.photos_getSizes(photo_id = photo.get('id'))
+            for size in photoSizes.find('sizes').findall('size'):
+            	url = size.attrib['source']
+            return url
 
 
     def move_photo(flickr_photo, picasa_album):
